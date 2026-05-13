@@ -31,9 +31,13 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(SDL3)
 
 # --- Engine library --- #
-
+file(GLOB_RECURSE ENGINE_SOURCES CONFIGURE_DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/engine/*.cpp
+)
+add_library(engine STATIC ${ENGINE_SOURCES})
+target_include_directories(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(engine PUBLIC SDL3::SDL3)
 
 # --- Games --- #
 add_executable(pong games/pong/main.cpp)
-target_link_libraries(pong PRIVATE SDL3::SDL3)
-target_include_directories(pong PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(pong PRIVATE engine)

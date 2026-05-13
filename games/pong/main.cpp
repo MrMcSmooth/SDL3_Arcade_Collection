@@ -1,8 +1,9 @@
 #include <iostream>
+#include "engine/core/Application.h"
 
 int main()
 {
-    std::cout << "Hello World.\n";
-
+    Application app;
+    app.MainLoop();
     return 0;
 }
