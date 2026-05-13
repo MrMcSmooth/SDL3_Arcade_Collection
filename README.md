@@ -1,2 +1,2 @@
 # SDL3_Arcade_Collection
-A set of games made and manged with C++ and SDL3. 
+A 2D game engine with Arcade game examples, made and managed with c++ and sdl3. 
