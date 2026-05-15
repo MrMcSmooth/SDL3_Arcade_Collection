@@ -29,9 +29,15 @@ namespace engine::core{
             SDL_Window* m_window = nullptr;
             SDL_Renderer* m_renderer = nullptr;
 
+            virtual void onStart();
+            virtual void onUpdate(float deltaTime);
+            virtual void onRender();
+            virtual void onTerminate();
+
         private:
-            bool m_running = true;
+            bool m_running;
             AppConfig m_config;
             void instant();
+            void update();
     };
 }//namespace engine::core
