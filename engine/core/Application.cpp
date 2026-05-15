@@ -89,7 +89,7 @@ namespace engine::core {
             tick();
             onUpdate(deltaTime);
             //252, 127, 3
-            SDL_SetRenderDrawColor(m_renderer, 252, 127, 3, 255);
+            SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
             SDL_RenderClear(m_renderer);
             onRender();
             SDL_RenderPresent(m_renderer);
