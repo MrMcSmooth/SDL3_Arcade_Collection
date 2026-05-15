@@ -1,19 +1,16 @@
 #include <iostream>
-#include "engine/core/Application.h"
+#include "PongApp.h"
 
 int main()
 {
-    engine::core::AppConfig config;
-    config.title = "Game";
-    config.window_width = 800;
-    config.window_height = 600;
+    PongApp pong;
 
-    engine::core::Application app(config);
-    if(!app.initialize()){
+    if(!pong.initialize()){
         return -1;
     }
 
-    app.run();
+    pong.run();
+    pong.terminate();
     
     return 0;
 }

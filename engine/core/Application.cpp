@@ -1,4 +1,5 @@
 #include "engine/core/Application.h"
+#include "SDL3/SDL.h"
 
 namespace engine::core {
 
@@ -24,10 +25,15 @@ namespace engine::core {
 
         m_window = SDL_CreateWindow(m_config.title, 
             m_config.window_width, m_config.window_height, SDL_WINDOW_RESIZABLE);
-
         if(!m_window){
             return false;
         }
+
+        m_renderer = SDL_CreateRenderer(m_window, nullptr);
+        if(!m_renderer){
+            return false;
+        }
+
         m_running = true;
         return true;        
     }
@@ -36,19 +42,22 @@ namespace engine::core {
 
         onTerminate();
 
+        if(m_renderer) {
+            SDL_DestroyRenderer(m_renderer);
+            m_renderer = nullptr;
+        }
+
         if(m_window){
             SDL_DestroyWindow(m_window);
             m_window = nullptr;
         }
+
         
         SDL_Quit();
     }
 
-    
-
-
-    //one instant of time during the loop
-    void Application::instant(){
+    //one tick of time during the loop
+    void Application::tick(){
 
         SDL_Event event;
 
@@ -59,11 +68,14 @@ namespace engine::core {
         }
     }
 
-    //main loop
+
+    //runs through main loop, call all necessar y engine functions
+    //while calculating frames and deltaTime
     void Application::run(){
 
-        Uint64 frames_per_second = 0;
+        int frames_per_second = 0;
         Uint64 lastTime = SDL_GetTicks();
+        Uint64 fpsTimer = lastTime;
 
         onStart();
 
@@ -71,20 +83,25 @@ namespace engine::core {
             Uint64 currentTime = SDL_GetTicks();
 
              //elapsed time.
-            float deltaTime = (currentTime - lastTime);        
+            float deltaTime = (currentTime - lastTime) / 1000.0f; 
+            lastTime = currentTime;       
             
-            instant();
+            tick();
             onUpdate(deltaTime);
+            //252, 127, 3
+            SDL_SetRenderDrawColor(m_renderer, 252, 127, 3, 255);
+            SDL_RenderClear(m_renderer);
             onRender();
+            SDL_RenderPresent(m_renderer);
             
             //fps
             frames_per_second++;
            
             //fps counter
-            if(currentTime > lastTime + 1000){
-                lastTime = currentTime;
-                SDL_Log("%lu frames per second", frames_per_second);
+            if(currentTime - fpsTimer >= 1000){
+                SDL_Log("%d FPS", frames_per_second);
                 frames_per_second = 0;
+                fpsTimer = currentTime;
             }
         }           
     }

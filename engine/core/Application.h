@@ -1,11 +1,7 @@
 #pragma once
-#include "SDL3/SDL_render.h"
-#include <SDL3/SDL.h>
-#include "SDL3/SDL_init.h"
-#include "SDL3/SDL_video.h"
 
-constexpr int WINDOW_WIDTH = 800;
-constexpr int WINDOW_HEIGHT = 600;
+struct SDL_Window;
+struct SDL_Renderer;
 
 namespace engine::core{
     
@@ -24,10 +20,12 @@ namespace engine::core{
             bool initialize();
             void run();
             void terminate();
+            
 
         protected:
             SDL_Window* m_window = nullptr;
             SDL_Renderer* m_renderer = nullptr;
+
 
             virtual void onStart();
             virtual void onUpdate(float deltaTime);
@@ -35,9 +33,9 @@ namespace engine::core{
             virtual void onTerminate();
 
         private:
-            bool m_running;
+            bool m_running = false;
             AppConfig m_config;
-            void instant();
-            void update();
+            void tick();
+            void requestQuit() {m_running = false;}
     };
 }//namespace engine::core

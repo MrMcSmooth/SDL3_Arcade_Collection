@@ -39,5 +39,8 @@ target_include_directories(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(engine PUBLIC SDL3::SDL3)
 
 # --- Games --- #
-add_executable(pong games/pong/main.cpp)
+add_executable(pong 
+    games/pong/main.cpp
+    games/pong/PongApp.cpp
+)
 target_link_libraries(pong PRIVATE engine)
