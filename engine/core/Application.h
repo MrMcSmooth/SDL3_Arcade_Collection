@@ -20,6 +20,7 @@ namespace engine::core{
             bool initialize();
             void run();
             void terminate();
+            void requestQuit() {m_running = false;}
             
 
         protected:
@@ -36,6 +37,6 @@ namespace engine::core{
             bool m_running = false;
             AppConfig m_config;
             void tick();
-            void requestQuit() {m_running = false;}
+
     };
 }//namespace engine::core
