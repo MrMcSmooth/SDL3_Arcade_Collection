@@ -5,6 +5,13 @@
 
 PongApp::PongApp() : Application(engine::core::AppConfig{"Pong",static_cast<int>(WINDOW_WIDTH), static_cast<int>(WINDOW_HEIGHT)}){}
 
+static bool rectangleOverlaps(const SDL_FRect& a, const SDL_FRect& b) {
+    return a.x < b.x + b.w &&
+           a.x + a.w > b.x &&
+           a.y < b.y + b.h &&
+           a.y + a.h > b.y;
+}
+
 void PongApp::onStart() {
     SDL_Log("Pong Started"); 
 } 
@@ -13,23 +20,41 @@ void PongApp::onUpdate(float deltaTime) {
 
     handleInput(deltaTime);
 
+    m_ballX += m_ballVX * deltaTime;
+    m_ballY += m_ballVY * deltaTime;
+    
+    SDL_FRect leftPaddle{LEFT_PADDLE_X, m_leftPaddleY, PADDLE_WIDTH, PADDLE_HEIGHT};
+    SDL_FRect rightPaddle{RIGHT_PADDLE_X, m_rightPaddleY, PADDLE_WIDTH, PADDLE_HEIGHT};
+    SDL_FRect ball{m_ballX, m_ballY, BALL_SIZE, BALL_SIZE};
+
     //bounce off ceiling, preserve momentum
-    if(m_ballY < 0 || m_ballY > WINDOW_HEIGHT - BALL_SIZE)
-    {
+    if(m_ballY < 0){
+        m_ballY = 0;
+        m_ballVY = -m_ballVY;
+    }
+    if(m_ballY > WINDOW_HEIGHT - BALL_SIZE){
+        m_ballY = WINDOW_HEIGHT - BALL_SIZE;
         m_ballVY = -m_ballVY;
     }
 
-    m_ballX += m_ballVX * deltaTime;
-    m_ballY += m_ballVY * deltaTime;
+    if (rectangleOverlaps(ball, leftPaddle)){
+        m_ballX = LEFT_PADDLE_X + PADDLE_WIDTH;
+        m_ballVX = -m_ballVX;
+    }
+    if (rectangleOverlaps(ball, rightPaddle)){
+        m_ballX = RIGHT_PADDLE_X - BALL_SIZE;
+        m_ballVX = -m_ballVX;
+    }
 
     if(m_ballX <  0 - BALL_SIZE){
-        player2Points++;
-        resetBall(0);
+        m_player2Points++;
+        resetBall(Player::Right);
     }
     if(m_ballX > WINDOW_WIDTH){
-        player1Points++;
-        resetBall(1);
+        m_player1Points++;
+        resetBall(Player::Left);
     }
+    
 
 
 }
@@ -39,19 +64,6 @@ void PongApp::onRender() {
     SDL_FRect rightPaddle{RIGHT_PADDLE_X, m_rightPaddleY, PADDLE_WIDTH, PADDLE_HEIGHT};
 
     SDL_FRect ball{m_ballX, m_ballY, BALL_SIZE, BALL_SIZE};
-
-    
-    if (rectangleOverlaps(ball, leftPaddle))
-    {
-        m_ballX = LEFT_PADDLE_X + PADDLE_WIDTH;
-        m_ballVX = -m_ballVX;
-    }
-
-    if (rectangleOverlaps(ball, rightPaddle))
-    {
-        m_ballX = RIGHT_PADDLE_X - BALL_SIZE;
-        m_ballVX = -m_ballVX;
-    }
 
     // set color to white for draw
     SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
@@ -67,13 +79,6 @@ void PongApp::onRender() {
 
 void PongApp::onTerminate() {
 
-}
-
-bool rectangleOverlaps(const SDL_FRect& a, const SDL_FRect& b) {
-    return a.x < b.x + b.w &&
-           a.x + a.w > b.x &&
-           a.y < b.y + b.h &&
-           a.y + a.h > b.y;
 }
 
 void PongApp::handleInput(float deltaTime){
@@ -94,15 +99,15 @@ void PongApp::handleInput(float deltaTime){
 
 }
 
-void PongApp::resetBall(bool whoScored){
+void PongApp::resetBall(Player scoredBy){
     m_ballX = (WINDOW_WIDTH - BALL_SIZE) / 2.0f;
     m_ballY = (WINDOW_HEIGHT - BALL_SIZE) / 2.0f;
-    if(whoScored){
+    if(scoredBy == Player::Left){
         m_ballVX = -BALL_SPEED;
-    } else {
+    } else if (scoredBy == Player::Right ){
         m_ballVX = BALL_SPEED;
     }
     m_ballVY = BALL_SPEED;
 
-    SDL_Log("%d : %d", player1Points, player2Points);
+    SDL_Log("%d : %d", m_player1Points, m_player2Points);
 }

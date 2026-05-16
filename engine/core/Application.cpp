@@ -98,13 +98,11 @@ namespace engine::core {
             frames_per_second++;
            
             //fps counter
-            /*
-            if(currentTime - fpsTimer >= 1000){
+            if(FPS_LOG && currentTime - fpsTimer >= 1000){
                 SDL_Log("%d FPS", frames_per_second);
                 frames_per_second = 0;
                 fpsTimer = currentTime;
             }
-            */
         }           
     }
 }//namespace engine::core

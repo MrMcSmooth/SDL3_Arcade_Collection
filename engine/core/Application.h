@@ -37,6 +37,7 @@ namespace engine::core{
             bool m_running = false;
             AppConfig m_config;
             void tick();
+            bool FPS_LOG = false;
 
     };
 }//namespace engine::core

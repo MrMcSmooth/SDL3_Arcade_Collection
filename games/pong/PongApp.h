@@ -1,8 +1,6 @@
 #pragma once
 #include "engine/core/Application.h"
 
-struct SDL_FRect;
-
 class PongApp : public engine::core::Application {
     public:
         PongApp();
@@ -12,6 +10,8 @@ class PongApp : public engine::core::Application {
         void onRender() override;
         void onTerminate() override;
     private:
+        enum class Player {Left, Right};
+        
         static constexpr float WINDOW_WIDTH = 800.0f;
         static constexpr float WINDOW_HEIGHT = 600.0f;
 
@@ -38,11 +38,10 @@ class PongApp : public engine::core::Application {
         float m_ballVX = BALL_SPEED;
         float m_ballVY = BALL_SPEED;
 
-        int player1Points = 0;
-        int player2Points = 0;
+        int m_player1Points = 0;
+        int m_player2Points = 0;
 
         void handleInput(float deltaTime);
-        void resetBall(bool whoScored);
-};
 
-       bool rectangleOverlaps(const SDL_FRect& a, const SDL_FRect& b);
+        void resetBall(Player scoredBy);
+};
