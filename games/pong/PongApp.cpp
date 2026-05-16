@@ -1,4 +1,5 @@
 #include "PongApp.h"
+#include "SDL3/SDL_log.h"
 #include <SDL3/SDL.h>
 #include <algorithm>
 
@@ -18,10 +19,17 @@ void PongApp::onUpdate(float deltaTime) {
         m_ballVY = -m_ballVY;
     }
 
-    m_ballX += m_ballVX * deltaTime * BALL_SPEED;
-    m_ballY += m_ballVY * deltaTime *   BALL_SPEED;
+    m_ballX += m_ballVX * deltaTime;
+    m_ballY += m_ballVY * deltaTime;
 
-
+    if(m_ballX <  0 - BALL_SIZE){
+        player2Points++;
+        resetBall(0);
+    }
+    if(m_ballX > WINDOW_WIDTH){
+        player1Points++;
+        resetBall(1);
+    }
 
 
 }
@@ -84,4 +92,17 @@ void PongApp::handleInput(float deltaTime){
     m_leftPaddleY = std::clamp(m_leftPaddleY, PADDLE_MIN_Y, PADDLE_MAX_Y);
     m_rightPaddleY = std::clamp(m_rightPaddleY, PADDLE_MIN_Y, PADDLE_MAX_Y);
 
+}
+
+void PongApp::resetBall(bool whoScored){
+    m_ballX = (WINDOW_WIDTH - BALL_SIZE) / 2.0f;
+    m_ballY = (WINDOW_HEIGHT - BALL_SIZE) / 2.0f;
+    if(whoScored){
+        m_ballVX = -BALL_SPEED;
+    } else {
+        m_ballVX = BALL_SPEED;
+    }
+    m_ballVY = BALL_SPEED;
+
+    SDL_Log("%d : %d", player1Points, player2Points);
 }
